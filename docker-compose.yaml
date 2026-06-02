@@ -1,0 +1,28 @@
+services:
+  code-server:
+    #image: lscr.io/linuxserver/code-server:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: code-server
+    # user: "1000:1000"
+    env_file:
+      - .env
+    volumes:
+      - ./config:/config
+      - ./scripts:/opt/scripts
+      - /home/aform/:/opt/workspace
+    #ports:
+    #  - 8039:8443
+    #  - 8041:3000
+    network_mode: host
+    restart: unless-stopped
+    shm_size: "1gb"
+    #networks:
+    #  - common-network
+    labels:
+      homelab.image.auto.update: true
+    
+networks:
+  common-network:
+    external: true
