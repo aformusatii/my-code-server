@@ -9,7 +9,7 @@ runtime bootstrapping.
 
 ## What is included
 
-- Python in `/opt/venv`, first on `PATH`
+- Python in `/config/.venv`, first on `PATH`
 - Node.js 20 with `npm`, `yarn`, and `pnpm`
 - OpenJDK 21 with Maven and Gradle
 - C/C++ tools: `gcc`, `g++`, `make`, `cmake`, `gdb`
@@ -55,7 +55,8 @@ code-server bind/port settings stored under `./config`.
 - Add permanent tools to the `Dockerfile`, not by hand inside a running
   container.
 - Do not override the linuxserver.io base image `ENTRYPOINT`.
-- Keep `/config` persistent; it is the runtime user's home directory.
+- Keep `/config` persistent; it is the runtime user's home directory and stores
+  the Python venv at `/config/.venv`.
 - After Dockerfile changes, sanity-check the key tools:
 
 ```bash

@@ -15,7 +15,7 @@ checking whether a tool exists — the tools below are guaranteed present.**
 ## Available Tools & How to Use Them
 
 ### 🐍 Python
-- A **pre-activated virtual environment** lives at `/opt/venv` and is **first on `PATH`**.
+- A **pre-activated virtual environment** lives at `/config/.venv` and is **first on `PATH`**.
 - `python`, `python3`, `pip`, and `pip3` all resolve to this venv.
 - **Install packages directly:** `pip install <package>` — it just works.
   - ⚠️ Do NOT use `apt install python3-<pkg>` for Python libraries.
@@ -41,8 +41,9 @@ checking whether a tool exists — the tools below are guaranteed present.**
 
 ## Operating Guidelines
 1. **Prefer the venv Python** — never modify the system Python.
-2. **Persisting installs:** Runtime `pip`/`npm` installs live inside the
-   container's filesystem; they persist for the session but are lost if the
-   container is recreated. For permanent tools, request a Dockerfile update.
+2. **Persisting installs:** Runtime `pip` installs live inside `/config/.venv`
+   and persist with the `/config` mount. Runtime global `npm` installs live
+   inside the container filesystem and are lost if the container is recreated.
+   For permanent tools, request a Dockerfile update.
 3. **Work directory:** Use the workspace folder you are placed in.
 4. **Be efficient:** The listed tools exist — skip redundant existence checks.

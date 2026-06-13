@@ -33,7 +33,7 @@ for tools available inside the container.
 
 | Toolchain | Current Dockerfile state |
 | --- | --- |
-| Python | `python3`, `pip`, `venv`, and dev headers are installed. A virtual environment is created at `/opt/venv`, placed first on `PATH`, and owned by `abc`. |
+| Python | `python3`, `pip`, `venv`, and dev headers are installed. A virtual environment is created at `/config/.venv` during container startup, placed first on `PATH`, and owned by `abc`. |
 | Node.js | Node.js 20 from NodeSource, plus global `yarn` and `pnpm` installed during the image build. |
 | Java | OpenJDK 21 JDK, Maven, and Gradle. `JAVA_HOME` is set to `/usr/lib/jvm/java-21-openjdk-amd64`. |
 | C / C++ | `build-essential`, `gcc`, `g++`, `make`, `cmake`, and `gdb`. |
@@ -43,7 +43,7 @@ for tools available inside the container.
 
 1. Add permanent tools to the `Dockerfile`; avoid documenting runtime manual
    installs as part of the image.
-2. Keep Python package installs inside `/opt/venv`. Do not recommend
+2. Keep Python package installs inside `/config/.venv`. Do not recommend
    `--break-system-packages` for normal use.
 3. If adding language ecosystems that need writable global state, create an
    explicit writable location and `chown` it for `abc`.

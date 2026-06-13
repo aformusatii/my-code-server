@@ -42,17 +42,13 @@ RUN apt-get update -y && \
 
 # -----------------------------------------------------------------------------
 # 2. Python virtual environment (solves PEP 668 "externally-managed" error)
-#    Agents can freely `pip install` into this venv.
+#    The venv lives under /config, which is the runtime user's persisted home.
+#    A startup hook creates it after the /config bind mount is available.
 # -----------------------------------------------------------------------------
-ENV VIRTUAL_ENV=/opt/venv
-RUN python3 -m venv "$VIRTUAL_ENV" && \
-    "$VIRTUAL_ENV/bin/pip" install --no-cache-dir --upgrade pip setuptools wheel
+ENV VIRTUAL_ENV=/config/.venv
 
 # Put the venv first on PATH so `python`, `pip`, etc. resolve to it everywhere.
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-
-# Convenience symlink so bare `python` works too.
-RUN ln -sf "$VIRTUAL_ENV/bin/python" /usr/local/bin/python
 
 # -----------------------------------------------------------------------------
 # 3. Node.js (LTS) + npm + common global package managers
@@ -80,25 +76,21 @@ ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
 ENV PATH="$JAVA_HOME/bin:$PATH"
 
 # -----------------------------------------------------------------------------
-# 5. Permissions: ensure the runtime user ("abc") can write to the venv
-#    so agents can install Python packages at runtime without sudo.
-# -----------------------------------------------------------------------------
-RUN chmod -R a+rwX "$VIRTUAL_ENV"
-
-# -----------------------------------------------------------------------------
-# 6. Agent instruction docs
+# 5. Runtime initialization hooks
 #    /config is a bind mount, so files copied straight into it are shadowed at
-#    runtime. Instead we bake the templates into a non-mounted path and let an
-#    s6 startup hook (/custom-cont-init.d) seed them into /config after the
-#    mount is in place. Source of truth lives in agents/IMG_*.md.
+#    runtime. s6 startup hooks in /custom-cont-init.d run after the mount is
+#    available, so they can create persisted runtime files there.
 # -----------------------------------------------------------------------------
 COPY agents/IMG_AGENTS.md /opt/agent-templates/AGENTS.md
 COPY agents/IMG_CLAUDE.md /opt/agent-templates/CLAUDE.md
+COPY container-init/setup-python-venv.sh /custom-cont-init.d/98-setup-python-venv
 COPY container-init/seed-agent-docs.sh /custom-cont-init.d/99-seed-agent-docs
-RUN chmod +x /custom-cont-init.d/99-seed-agent-docs
+RUN chmod +x \
+        /custom-cont-init.d/98-setup-python-venv \
+        /custom-cont-init.d/99-seed-agent-docs
 
 # -----------------------------------------------------------------------------
-# 7. (Future expansion) Add more languages/tools below this line.
+# 6. (Future expansion) Add more languages/tools below this line.
 #    e.g. Go, Rust, .NET, databases clients, etc.
 # -----------------------------------------------------------------------------
 # RUN ...
