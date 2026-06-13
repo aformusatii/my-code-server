@@ -12,14 +12,13 @@ services:
       - ./config:/config
       - ./scripts:/opt/scripts
       - /home/aform/:/opt/workspace
-    #ports:
-    #  - 8039:8443
-    #  - 8041:3000
-    network_mode: host
+    #network_mode: host
+    ports:
+      - 8443:8443
+    networks:
+      - common-network
     restart: unless-stopped
     shm_size: "1gb"
-    #networks:
-    #  - common-network
     labels:
       homelab.image.auto.update: true
     
