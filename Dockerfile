@@ -86,7 +86,19 @@ ENV PATH="$JAVA_HOME/bin:$PATH"
 RUN chown -R abc:abc "$VIRTUAL_ENV"
 
 # -----------------------------------------------------------------------------
-# 6. (Future expansion) Add more languages/tools below this line.
+# 6. Agent instruction docs
+#    /config is a bind mount, so files copied straight into it are shadowed at
+#    runtime. Instead we bake the templates into a non-mounted path and let an
+#    s6 startup hook (/custom-cont-init.d) seed them into /config after the
+#    mount is in place. Source of truth lives in agents/IMG_*.md.
+# -----------------------------------------------------------------------------
+COPY agents/IMG_AGENTS.md /opt/agent-templates/AGENTS.md
+COPY agents/IMG_CLAUDE.md /opt/agent-templates/CLAUDE.md
+COPY container-init/seed-agent-docs.sh /custom-cont-init.d/99-seed-agent-docs
+RUN chmod +x /custom-cont-init.d/99-seed-agent-docs
+
+# -----------------------------------------------------------------------------
+# 7. (Future expansion) Add more languages/tools below this line.
 #    e.g. Go, Rust, .NET, databases clients, etc.
 # -----------------------------------------------------------------------------
 # RUN ...
