@@ -83,7 +83,7 @@ ENV PATH="$JAVA_HOME/bin:$PATH"
 # 5. Permissions: ensure the runtime user ("abc") can write to the venv
 #    so agents can install Python packages at runtime without sudo.
 # -----------------------------------------------------------------------------
-RUN chown -R abc:abc "$VIRTUAL_ENV"
+RUN chmod -R a+rwX "$VIRTUAL_ENV"
 
 # -----------------------------------------------------------------------------
 # 6. Agent instruction docs
