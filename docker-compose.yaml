@@ -1,18 +1,15 @@
 services:
   code-server:
-    #image: lscr.io/linuxserver/code-server:latest
     build:
       context: .
       dockerfile: Dockerfile
     container_name: code-server
-    # user: "1000:1000"
     env_file:
       - .env
     volumes:
       - ./config:/config
       - ./scripts:/opt/scripts
       - /home/aform/:/opt/workspace
-    #network_mode: host
     ports:
       - 8443:8443
     networks:
