@@ -2,3 +2,5 @@ backup/
 scripts/
 config/
 .env
+
+docker-compose.yaml
