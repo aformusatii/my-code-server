@@ -1,7 +1,10 @@
 name: Build and Push code-server Image to AWS
 
 on:
-  workflow_dispatch:  # Manual trigger only
+  push:
+    branches:
+      - main
+  workflow_dispatch:  # Manual trigger
 
 env:
   AWS_REGION: us-east-1
