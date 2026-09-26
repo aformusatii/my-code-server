@@ -34,6 +34,9 @@ jobs:
       with:
         registry-type: public
 
+    - name: Build Docker Image
+      run: docker build -t ${{ env.IMAGE_NAME }} .
+
     - name: Get next version
       uses: reecetech/version-increment@2023.10.2
       id: version
@@ -41,18 +44,19 @@ jobs:
         scheme: semver
         increment: patch
 
-    - name: Build & Push Docker Image
-      uses: docker/build-push-action@v6
+    - name: Tag Version & Push Docker Image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      with:
-        context: .
-        push: true
-        tags: |
-          ${{ env.ECR_REGISTRY }}/${{ env.ECR_REGISTRY_ALIAS }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}
-          ${{ env.ECR_REGISTRY }}/${{ env.ECR_REGISTRY_ALIAS }}/${{ env.IMAGE_NAME }}:latest
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
+      run: |
+        docker tag ${{ env.IMAGE_NAME }} $ECR_REGISTRY/${{ env.ECR_REGISTRY_ALIAS }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}
+        docker push $ECR_REGISTRY/${{ env.ECR_REGISTRY_ALIAS }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}
+
+    - name: Tag Latest & Push Docker Image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      run: |
+        docker tag ${{ env.IMAGE_NAME }} $ECR_REGISTRY/${{ env.ECR_REGISTRY_ALIAS }}/${{ env.IMAGE_NAME }}:latest
+        docker push $ECR_REGISTRY/${{ env.ECR_REGISTRY_ALIAS }}/${{ env.IMAGE_NAME }}:latest
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
