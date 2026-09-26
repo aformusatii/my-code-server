@@ -16,6 +16,10 @@ services:
       - common-network
     restart: unless-stopped
     shm_size: "1gb"
+    devices:
+      - "/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_01912697-if00-port0:/dev/ttyUSB0"
+    group_add:
+      - "20"          # dialout GID from the host — numeric, not the name
     labels:
       homelab.image.auto.update: true
     

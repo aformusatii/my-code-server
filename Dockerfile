@@ -76,7 +76,30 @@ ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
 ENV PATH="$JAVA_HOME/bin:$PATH"
 
 # -----------------------------------------------------------------------------
-# 5. Runtime initialization hooks
+# 5. AI coding CLIs (available to abc from any terminal)
+#    Install outside /config so the persistent home mount cannot hide them.
+# -----------------------------------------------------------------------------
+ARG CODEX_VERSION=latest
+RUN npm install -g --prefix /usr/local "@openai/codex@${CODEX_VERSION}" && \
+    codex --version && \
+    npm cache clean --force
+
+# Claude's native apt package does not depend on the installed Node.js version.
+# Updates are managed by rebuilding the image, rather than a runtime updater.
+RUN install -d -m 0755 /etc/apt/keyrings && \
+    curl -fsSL https://downloads.claude.ai/keys/claude-code.asc \
+        -o /etc/apt/keyrings/claude-code.asc && \
+    gpg --batch --show-keys --with-colons /etc/apt/keyrings/claude-code.asc | \
+        awk -F: '/^fpr:/ { if ($10 == "31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE") valid=1 } END { exit !valid }' && \
+    echo "deb [signed-by=/etc/apt/keyrings/claude-code.asc] https://downloads.claude.ai/claude-code/apt/stable stable main" \
+        > /etc/apt/sources.list.d/claude-code.list && \
+    apt-get update -y && \
+    apt-get install -y --no-install-recommends claude-code && \
+    claude --version && \
+    rm -rf /var/lib/apt/lists/*
+
+# -----------------------------------------------------------------------------
+# 6. Runtime initialization hooks
 #    /config is a bind mount, so files copied straight into it are shadowed at
 #    runtime. s6 startup hooks in /custom-cont-init.d run after the mount is
 #    available, so they can create persisted runtime files there.
@@ -90,7 +113,7 @@ RUN chmod +x \
         /custom-cont-init.d/99-seed-agent-docs
 
 # -----------------------------------------------------------------------------
-# 6. (Future expansion) Add more languages/tools below this line.
+# 7. (Future expansion) Add more languages/tools below this line.
 #    e.g. Go, Rust, .NET, databases clients, etc.
 # -----------------------------------------------------------------------------
 # RUN ...

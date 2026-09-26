@@ -11,6 +11,7 @@ runtime bootstrapping.
 
 - Python in `/config/.venv`, first on `PATH`
 - Node.js 20 with `npm`, `yarn`, and `pnpm`
+- Codex CLI (`codex`) and Claude Code CLI (`claude`)
 - OpenJDK 21 with Maven and Gradle
 - C/C++ tools: `gcc`, `g++`, `make`, `cmake`, `gdb`
 - Utilities: `git`, `curl`, `wget`, `zip`, `unzip`
@@ -50,6 +51,37 @@ Or rebuild and restart with:
 The compose file uses `network_mode: host`, so access depends on the
 code-server bind/port settings stored under `./config`.
 
+## AI coding CLIs
+
+Codex is installed globally through npm; Claude Code uses Anthropic's signed
+apt repository on the stable release channel. Both are installed in the image,
+outside the `/config` mount, and are available on `PATH`.
+
+After rebuilding, run `codex` or `claude` from a project directory in the
+code-server terminal. From the Docker host, open a shell as the runtime user:
+
+```bash
+docker compose exec --user abc code-server bash
+```
+
+Follow each CLI's sign-in prompts on first use. Run them as `abc` so their
+settings and file-based login state live in the persistent `/config` home.
+
+The VS Code extensions normally use their own bundled executables; installing
+these terminal commands does not switch the extensions to them. See the
+[Codex extension settings](https://developers.openai.com/codex/ide/settings/)
+and [Claude Code extension documentation](https://code.claude.com/docs/en/vs-code).
+
+To fetch newer CLI releases, rebuild without Docker's cached install layers:
+
+```bash
+docker compose build --no-cache code-server
+docker compose up -d code-server
+```
+
+For a specific Codex release, pass `--build-arg CODEX_VERSION=<version>` to the
+build command. Claude Code follows the apt repository's stable channel.
+
 ## Maintenance notes
 
 - Add permanent tools to the `Dockerfile`, not by hand inside a running
@@ -62,6 +94,7 @@ code-server bind/port settings stored under `./config`.
 ```bash
 python --version && pip --version
 node --version && npm --version
+codex --version && claude --version
 mvn -version
 gcc --version
 ```
