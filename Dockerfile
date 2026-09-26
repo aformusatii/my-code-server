@@ -99,7 +99,25 @@ RUN install -d -m 0755 /etc/apt/keyrings && \
     rm -rf /var/lib/apt/lists/*
 
 # -----------------------------------------------------------------------------
-# 6. Runtime initialization hooks
+# 6. Docker CLI + Compose plugin
+#    Client tools only (no daemon). Intended to be used against the host's
+#    Docker daemon via a bind-mounted /var/run/docker.sock at runtime.
+# -----------------------------------------------------------------------------
+RUN install -d -m 0755 /etc/apt/keyrings && \
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+        -o /etc/apt/keyrings/docker.asc && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu noble stable" \
+        > /etc/apt/sources.list.d/docker.list && \
+    apt-get update -y && \
+    apt-get install -y --no-install-recommends \
+        docker-ce-cli \
+        docker-compose-plugin && \
+    docker --version && \
+    docker compose version && \
+    rm -rf /var/lib/apt/lists/*
+
+# -----------------------------------------------------------------------------
+# 7. Runtime initialization hooks
 #    /config is a bind mount, so files copied straight into it are shadowed at
 #    runtime. s6 startup hooks in /custom-cont-init.d run after the mount is
 #    available, so they can create persisted runtime files there.
@@ -113,7 +131,7 @@ RUN chmod +x \
         /custom-cont-init.d/99-seed-agent-docs
 
 # -----------------------------------------------------------------------------
-# 7. (Future expansion) Add more languages/tools below this line.
+# 8. (Future expansion) Add more languages/tools below this line.
 #    e.g. Go, Rust, .NET, databases clients, etc.
 # -----------------------------------------------------------------------------
 # RUN ...
