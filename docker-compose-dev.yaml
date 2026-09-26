@@ -1,6 +1,8 @@
 services:
   code-server:
-    image: public.ecr.aws/f3w7h7x2/code-server:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: code-server
     env_file:
       - .env
@@ -8,13 +10,14 @@ services:
       - ./config:/config
       - ./scripts:/opt/scripts
       - /home/aform/:/opt/workspace
-      - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - 8443:8443
     networks:
       - common-network
     restart: unless-stopped
     shm_size: "1gb"
+    devices:
+      - "/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_01912697-if00-port0:/dev/ttyUSB0"
     group_add:
       - "20"          # dialout GID from the host — numeric, not the name
     labels:
