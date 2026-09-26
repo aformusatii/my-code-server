@@ -15,11 +15,11 @@ set -e
 # Codex -> /config/.codex/AGENTS.md
 mkdir -p /config/.codex
 cp /opt/agent-templates/AGENTS.md /config/.codex/AGENTS.md
-chown abc:abc /config/.codex/AGENTS.md
+chown abc:abc /config/.codex /config/.codex/AGENTS.md
 
 # Claude -> /config/.claude/CLAUDE.md
 mkdir -p /config/.claude
 cp /opt/agent-templates/CLAUDE.md /config/.claude/CLAUDE.md
-chown abc:abc /config/.claude/CLAUDE.md
+chown abc:abc /config/.claude /config/.claude/CLAUDE.md
 
 echo "[seed-agent-docs] seeded .codex/AGENTS.md and .claude/CLAUDE.md into /config"
