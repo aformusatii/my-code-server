@@ -19,6 +19,12 @@ services:
       - "20"          # dialout GID from the host — numeric, not the name
     labels:
       homelab.image.auto.update: true
+      homelab.external.proxy.enabled: true
+      homelab.external.proxy.domain: vsarr.htmlsketcher.com
+      homelab.external.proxy.template: default
+      homelab.external.proxy.internal.host: 192.168.100.5
+      homelab.external.proxy.internal.port: 8443
+      homelab.external.proxy.socket.path: /
     
 networks:
   common-network:
