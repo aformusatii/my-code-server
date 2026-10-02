@@ -124,6 +124,8 @@ RUN install -d -m 0755 /etc/apt/keyrings && \
 # -----------------------------------------------------------------------------
 COPY agents/IMG_AGENTS.md /opt/agent-templates/AGENTS.md
 COPY agents/IMG_CLAUDE.md /opt/agent-templates/CLAUDE.md
+COPY agents/skills/ /opt/agent-templates/skills/
+
 COPY container-init/setup-python-venv.sh /custom-cont-init.d/98-setup-python-venv
 COPY container-init/setup-docker-group.sh /custom-cont-init.d/97-setup-docker-group
 COPY container-init/seed-agent-docs.sh /custom-cont-init.d/99-seed-agent-docs
