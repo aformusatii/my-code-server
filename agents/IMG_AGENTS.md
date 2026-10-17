@@ -23,7 +23,7 @@ checking whether a tool exists — the tools below are guaranteed present.**
 - The venv is writable by user `abc`, so no `sudo` is required for pip.
 
 ### 🟢 Node.js / JavaScript / TypeScript
-- **Node.js 20 LTS**, with `npm`, `yarn`, and `pnpm` available globally.
+- **Node.js 24 LTS**, with `npm`, `yarn`, and `pnpm` available globally.
 - Install project deps: `npm install`, `yarn`, or `pnpm install`.
 - Run code: `node script.js`.
 

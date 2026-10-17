@@ -34,7 +34,7 @@ for tools available inside the container.
 | Toolchain | Current Dockerfile state |
 | --- | --- |
 | Python | `python3`, `pip`, `venv`, and dev headers are installed. A virtual environment is created at `/config/.venv` during container startup, placed first on `PATH`, and owned by `abc`. |
-| Node.js | Node.js 20 from NodeSource, plus global `yarn` and `pnpm` installed during the image build. |
+| Node.js | Node.js 24 LTS from NodeSource, plus global `yarn` and `pnpm` installed during the image build. |
 | Java | OpenJDK 21 JDK, Maven, and Gradle. `JAVA_HOME` is set to `/usr/lib/jvm/java-21-openjdk-amd64`. |
 | C / C++ | `build-essential`, `gcc`, `g++`, `make`, `cmake`, and `gdb`. |
 | Utilities | `git`, `curl`, `wget`, `zip`, `unzip`, `ca-certificates`, `gnupg`, `software-properties-common`, and `pkg-config`. |

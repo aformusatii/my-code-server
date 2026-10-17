@@ -54,7 +54,7 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 # 3. Node.js (LTS) + npm + common global package managers
 #    Installed via NodeSource for an up-to-date version.
 # -----------------------------------------------------------------------------
-ENV NODE_MAJOR=20
+ENV NODE_MAJOR=24
 RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_MAJOR}.x | bash - && \
     apt-get install -y --no-install-recommends nodejs && \
     npm install -g yarn pnpm && \

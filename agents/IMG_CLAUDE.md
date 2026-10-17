@@ -17,7 +17,7 @@ verify them.
 | Language / Tool | What's available | How to use |
 |-----------------|------------------|------------|
 | **Python** | venv at `/config/.venv`, on PATH; `python`, `pip` | `pip install <pkg>` works directly — **no `--break-system-packages` needed** |
-| **Node.js** | Node 20 LTS + `npm`, `yarn`, `pnpm` | `npm install`, `node app.js` |
+| **Node.js** | Node 24 LTS + `npm`, `yarn`, `pnpm` | `npm install`, `node app.js` |
 | **Java** | OpenJDK 21 JDK + Maven + Gradle, `JAVA_HOME` set | `javac File.java`, `java File`, `mvn`, `gradle` |
 | **C / C++** | `gcc`, `g++`, `make`, `cmake`, `gdb` | `gcc main.c -o main && ./main` |
 | **Utilities** | `git`, `curl`, `wget`, `zip`, `unzip` | standard usage |
