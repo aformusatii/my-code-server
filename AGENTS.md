@@ -39,6 +39,7 @@ for tools available inside the container.
 | Java | OpenJDK 21 JDK, Maven, and Gradle. `JAVA_HOME` is set to `/usr/lib/jvm/java-21-openjdk-amd64`. |
 | C / C++ | `build-essential`, `gcc`, `g++`, `make`, `cmake`, and `gdb`. |
 | Utilities | `git`, `curl`, `wget`, `zip`, `unzip`, `ca-certificates`, `gnupg`, `software-properties-common`, and `pkg-config`. |
+| GitHub CLI | `gh` from GitHub's signed apt repository. `/etc/gitconfig` makes git use `gh auth git-credential` for `https://github.com` and `https://gist.github.com`. Auth is a one-time `gh auth login` as `abc`, stored in the persisted `/config/.config/gh`. |
 
 ## Maintenance Guidelines
 
@@ -63,6 +64,7 @@ After changing the image, rebuild and verify:
 python --version && pip --version
 node --version && npm --version
 codex --version && claude --version
+gh --version
 mvn -version
 gcc --version
 ```

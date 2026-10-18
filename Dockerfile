@@ -117,7 +117,34 @@ RUN install -d -m 0755 /etc/apt/keyrings && \
     rm -rf /var/lib/apt/lists/*
 
 # -----------------------------------------------------------------------------
-# 7. Runtime initialization hooks
+# 7. GitHub CLI (gh) from GitHub's signed apt repository
+#    Auth is a one-time `gh auth login` as abc; its token lives in
+#    /config/.config/gh so it persists with the /config mount.
+#    The system gitconfig makes git use gh for https://github.com credentials.
+# -----------------------------------------------------------------------------
+# Every primary key in the keyring must be one GitHub publishes for the CLI.
+RUN install -d -m 0755 /etc/apt/keyrings && \
+    curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+        -o /etc/apt/keyrings/githubcli-archive-keyring.gpg && \
+    chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg && \
+    gpg --batch --show-keys --with-colons /etc/apt/keyrings/githubcli-archive-keyring.gpg | \
+        awk -F: '/^pub:/ { want=1; next } want && /^fpr:/ { want=0; n++; \
+            if ($10 != "2C6106201985B60E6C7AC87323F3D4EA75716059" && \
+                $10 != "7F38BBB59D064DBCB3D84D725612B36462313325") bad=1 } \
+            END { exit (bad || n == 0) }' && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+        > /etc/apt/sources.list.d/github-cli.list && \
+    apt-get update -y && \
+    apt-get install -y --no-install-recommends gh && \
+    gh --version && \
+    git config --system credential.https://github.com.helper "" && \
+    git config --system --add credential.https://github.com.helper "!/usr/bin/gh auth git-credential" && \
+    git config --system credential.https://gist.github.com.helper "" && \
+    git config --system --add credential.https://gist.github.com.helper "!/usr/bin/gh auth git-credential" && \
+    rm -rf /var/lib/apt/lists/*
+
+# -----------------------------------------------------------------------------
+# 8. Runtime initialization hooks
 #    /config is a bind mount, so files copied straight into it are shadowed at
 #    runtime. s6 startup hooks in /custom-cont-init.d run after the mount is
 #    available, so they can create persisted runtime files there.
@@ -135,7 +162,7 @@ RUN chmod +x \
         /custom-cont-init.d/99-seed-agent-docs
 
 # -----------------------------------------------------------------------------
-# 8. (Future expansion) Add more languages/tools below this line.
+# 9. (Future expansion) Add more languages/tools below this line.
 #    e.g. Go, Rust, .NET, databases clients, etc.
 # -----------------------------------------------------------------------------
 # RUN ...

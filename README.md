@@ -10,8 +10,9 @@ runtime bootstrapping.
 ## What is included
 
 - Python in `/config/.venv`, first on `PATH`
-- Node.js 20 with `npm`, `yarn`, and `pnpm`
+- Node.js 24 LTS with `npm`, `yarn`, and `pnpm`
 - Codex CLI (`codex`) and Claude Code CLI (`claude`)
+- GitHub CLI (`gh`), also used as git's credential helper for github.com
 - OpenJDK 21 with Maven and Gradle
 - C/C++ tools: `gcc`, `g++`, `make`, `cmake`, `gdb`
 - Utilities: `git`, `curl`, `wget`, `zip`, `unzip`
@@ -82,6 +83,29 @@ docker compose up -d code-server
 For a specific Codex release, pass `--build-arg CODEX_VERSION=<version>` to the
 build command. Claude Code follows the apt repository's stable channel.
 
+## GitHub CLI
+
+`gh` is installed from GitHub's signed apt repository so agents can manage
+repositories, pull requests, issues, releases, and Actions runs. The image's
+system git config (`/etc/gitconfig`) routes `https://github.com` credentials
+through `gh`, so HTTPS clone/push works once `gh` is logged in. SSH remotes are
+unaffected.
+
+Log in once as `abc` from the code-server terminal:
+
+```bash
+gh auth login -h github.com -p https -s workflow --insecure-storage
+gh auth status
+```
+
+- The token is stored in `/config/.config/gh/hosts.yml`, so it survives image
+  rebuilds and container recreation. `--insecure-storage` skips the system
+  keyring, which does not exist in the container.
+- The `workflow` scope lets agents edit `.github/workflows/*`. Add other scopes
+  later only if needed, e.g. `gh auth refresh -s delete_repo`.
+- To revoke access, run `gh auth logout` and remove the authorization under
+  GitHub → Settings → Applications.
+
 ## Maintenance notes
 
 - Add permanent tools to the `Dockerfile`, not by hand inside a running
@@ -95,6 +119,7 @@ build command. Claude Code follows the apt repository's stable channel.
 python --version && pip --version
 node --version && npm --version
 codex --version && claude --version
+gh --version
 mvn -version
 gcc --version
 ```

@@ -39,6 +39,14 @@ checking whether a tool exists — the tools below are guaranteed present.**
 ### General Utilities
 - `git`, `curl`, `wget`, `unzip`, `zip` are installed.
 
+### 🐙 GitHub CLI
+- `gh` is installed; the user authenticates it once with `gh auth login`.
+- Use `gh` for GitHub work instead of raw API calls: `gh pr create`,
+  `gh issue list`, `gh run watch`, `gh release create`, `gh api ...`.
+- HTTPS `git push`/`pull` to github.com uses gh's credentials automatically.
+- If `gh auth status` reports no login, ask the user to run `gh auth login`.
+  ⚠️ Do NOT ask the user to paste tokens.
+
 ## Operating Guidelines
 1. **Prefer the venv Python** — never modify the system Python.
 2. **Persisting installs:** Runtime `pip` installs live inside `/config/.venv`

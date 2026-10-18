@@ -21,6 +21,7 @@ verify them.
 | **Java** | OpenJDK 21 JDK + Maven + Gradle, `JAVA_HOME` set | `javac File.java`, `java File`, `mvn`, `gradle` |
 | **C / C++** | `gcc`, `g++`, `make`, `cmake`, `gdb` | `gcc main.c -o main && ./main` |
 | **Utilities** | `git`, `curl`, `wget`, `zip`, `unzip` | standard usage |
+| **GitHub CLI** | `gh`, authenticated once by the user via `gh auth login` | `gh pr create`, `gh issue list`, `gh run watch`, `gh api ...` |
 
 ## Key Rules
 
@@ -33,6 +34,11 @@ verify them.
    installed runtime tools.
 4. **Trust the toolchain:** Everything above is guaranteed installed — avoid
    redundant `which`/`--version` checks unless debugging.
+5. **GitHub → use `gh`** for PRs, issues, releases, Actions, and API calls
+   instead of raw `curl` requests. HTTPS `git push`/`pull` to github.com uses
+   gh's credentials automatically.
+   - If `gh auth status` reports no login, ask the user to run `gh auth login`.
+     ❌ Don't ask the user to paste tokens.
 
 ## When Adding New Tools
 If a task needs a tool not listed here (e.g., Go, Rust, a system library),
