@@ -144,7 +144,34 @@ RUN install -d -m 0755 /etc/apt/keyrings && \
     rm -rf /var/lib/apt/lists/*
 
 # -----------------------------------------------------------------------------
-# 8. Runtime initialization hooks
+# 8. Document / PDF tooling
+#    pandoc converts between Markdown, HTML, DOCX, etc.; WeasyPrint renders
+#    HTML/CSS to PDF on its own or as pandoc's engine:
+#    `pandoc in.md -o out.pdf --pdf-engine=weasyprint`.
+#    WeasyPrint comes from pip in its own venv under /opt, outside /config:
+#    Ubuntu's package drags in scipy/sympy (~150 MB) through python3-fonttools.
+#    Pango/HarfBuzz are the system libraries pip's WeasyPrint needs;
+#    fonts-dejavu-extra adds the italic faces fonts-dejavu-core lacks.
+#    Leave WEASYPRINT_VERSION empty for the latest release, or pin e.g. 66.0.
+# -----------------------------------------------------------------------------
+ARG WEASYPRINT_VERSION=
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends \
+        pandoc \
+        libpango-1.0-0 \
+        libpangoft2-1.0-0 \
+        libharfbuzz-subset0 \
+        fonts-dejavu-extra && \
+    python3 -m venv /opt/weasyprint && \
+    /opt/weasyprint/bin/pip install --no-cache-dir \
+        "weasyprint${WEASYPRINT_VERSION:+==${WEASYPRINT_VERSION}}" && \
+    ln -s /opt/weasyprint/bin/weasyprint /usr/local/bin/weasyprint && \
+    pandoc --version && \
+    weasyprint --version && \
+    rm -rf /var/lib/apt/lists/*
+
+# -----------------------------------------------------------------------------
+# 9. Runtime initialization hooks
 #    /config is a bind mount, so files copied straight into it are shadowed at
 #    runtime. s6 startup hooks in /custom-cont-init.d run after the mount is
 #    available, so they can create persisted runtime files there.
@@ -162,7 +189,7 @@ RUN chmod +x \
         /custom-cont-init.d/99-seed-agent-docs
 
 # -----------------------------------------------------------------------------
-# 9. (Future expansion) Add more languages/tools below this line.
+# 10. (Future expansion) Add more languages/tools below this line.
 #    e.g. Go, Rust, .NET, databases clients, etc.
 # -----------------------------------------------------------------------------
 # RUN ...

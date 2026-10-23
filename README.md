@@ -13,6 +13,7 @@ runtime bootstrapping.
 - Node.js 24 LTS with `npm`, `yarn`, and `pnpm`
 - Codex CLI (`codex`) and Claude Code CLI (`claude`)
 - GitHub CLI (`gh`), also used as git's credential helper for github.com
+- Document/PDF tools: `pandoc` and `weasyprint` (HTML/CSS to PDF)
 - OpenJDK 21 with Maven and Gradle
 - C/C++ tools: `gcc`, `g++`, `make`, `cmake`, `gdb`
 - Utilities: `git`, `curl`, `wget`, `zip`, `unzip`
@@ -120,6 +121,7 @@ python --version && pip --version
 node --version && npm --version
 codex --version && claude --version
 gh --version
+pandoc --version && weasyprint --version
 mvn -version
 gcc --version
 ```

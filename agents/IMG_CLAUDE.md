@@ -22,6 +22,7 @@ verify them.
 | **C / C++** | `gcc`, `g++`, `make`, `cmake`, `gdb` | `gcc main.c -o main && ./main` |
 | **Utilities** | `git`, `curl`, `wget`, `zip`, `unzip` | standard usage |
 | **GitHub CLI** | `gh`, authenticated once by the user via `gh auth login` | `gh pr create`, `gh issue list`, `gh run watch`, `gh api ...` |
+| **Docs / PDF** | `pandoc`, `weasyprint` (HTML/CSS → PDF) | `pandoc in.md -o out.pdf --pdf-engine=weasyprint`, `weasyprint in.html out.pdf` |
 
 ## Key Rules
 

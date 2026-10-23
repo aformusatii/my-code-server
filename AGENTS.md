@@ -40,6 +40,7 @@ for tools available inside the container.
 | C / C++ | `build-essential`, `gcc`, `g++`, `make`, `cmake`, and `gdb`. |
 | Utilities | `git`, `curl`, `wget`, `zip`, `unzip`, `ca-certificates`, `gnupg`, `software-properties-common`, and `pkg-config`. |
 | GitHub CLI | `gh` from GitHub's signed apt repository. `/etc/gitconfig` makes git use `gh auth git-credential` for `https://github.com` and `https://gist.github.com`. Auth is a one-time `gh auth login` as `abc`, stored in the persisted `/config/.config/gh`. |
+| Docs / PDF | `pandoc` from Ubuntu's apt repositories; `weasyprint` from pip in a root-owned venv at `/opt/weasyprint`, linked into `/usr/local/bin`. WeasyPrint renders HTML/CSS to PDF and is pandoc's PDF engine (`--pdf-engine=weasyprint`); no LaTeX is installed. |
 
 ## Maintenance Guidelines
 
@@ -65,6 +66,7 @@ python --version && pip --version
 node --version && npm --version
 codex --version && claude --version
 gh --version
+pandoc --version && weasyprint --version
 mvn -version
 gcc --version
 ```

@@ -47,6 +47,13 @@ checking whether a tool exists — the tools below are guaranteed present.**
 - If `gh auth status` reports no login, ask the user to run `gh auth login`.
   ⚠️ Do NOT ask the user to paste tokens.
 
+### 📄 Documents / PDF
+- `pandoc` converts between Markdown, HTML, DOCX, and other formats.
+- `weasyprint` renders HTML/CSS to PDF; it is also pandoc's PDF engine here
+  (no LaTeX is installed).
+- Markdown → PDF: `pandoc in.md -o out.pdf --pdf-engine=weasyprint`.
+- HTML → PDF: `weasyprint in.html out.pdf`.
+
 ## Operating Guidelines
 1. **Prefer the venv Python** — never modify the system Python.
 2. **Persisting installs:** Runtime `pip` installs live inside `/config/.venv`
