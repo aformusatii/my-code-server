@@ -41,7 +41,8 @@ jobs:
       run: docker build -t ${{ env.IMAGE_NAME }} .
 
     - name: Verify OpenCode as runtime user
-      run: docker run --rm --user abc --entrypoint opencode ${{ env.IMAGE_NAME }} --version
+      # Supply a writable home, normally prepared by the linuxserver entrypoint.
+      run: docker run --rm --tmpfs /config:mode=1777 --user abc --entrypoint opencode ${{ env.IMAGE_NAME }} --version
 
     - name: Get next version
       uses: reecetech/version-increment@2023.10.2

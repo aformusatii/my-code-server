@@ -85,10 +85,13 @@ RUN npm install -g --prefix /usr/local "@openai/codex@${CODEX_VERSION}" && \
     npm cache clean --force
 
 # OpenCode's native CLI is installed through its official npm package.
+# Installation and --version write state: keep build-time files out of /config.
 ARG OPENCODE_VERSION=latest
-RUN npm install -g --prefix /usr/local "@opencode/cli@${OPENCODE_VERSION}" && \
+RUN export HOME=/tmp/opencode-build-check && \
+    npm install -g --prefix /usr/local "@opencode/cli@${OPENCODE_VERSION}" && \
     opencode --version && \
-    npm cache clean --force
+    npm cache clean --force && \
+    rm -rf /tmp/opencode-build-check
 
 # Claude's native apt package does not depend on the installed Node.js version.
 # Updates are managed by rebuilding the image, rather than a runtime updater.
