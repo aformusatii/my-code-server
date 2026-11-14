@@ -31,4 +31,11 @@ mkdir -p "/config/.claude/skills"
 cp -R /opt/agent-templates/skills/. "/config/.claude/skills/"
 chown -R abc:abc "/config/.claude/skills"
 
-echo "[seed-agent-docs] seeded instruction docs and skills for Codex and Claude into /config"
+# OpenCode -> /config/.config/opencode (persistent global instructions/skills)
+mkdir -p /config/.config/opencode/skills
+cp /opt/agent-templates/AGENTS.md /config/.config/opencode/AGENTS.md
+cp -R /opt/agent-templates/skills/. /config/.config/opencode/skills/
+chown abc:abc /config/.config /config/.config/opencode /config/.config/opencode/AGENTS.md
+chown -R abc:abc /config/.config/opencode/skills
+
+echo "[seed-agent-docs] seeded instruction docs and skills for Codex, Claude, and OpenCode into /config"

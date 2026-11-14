@@ -40,6 +40,9 @@ jobs:
     - name: Build Docker Image
       run: docker build -t ${{ env.IMAGE_NAME }} .
 
+    - name: Verify OpenCode as runtime user
+      run: docker run --rm --user abc --entrypoint opencode ${{ env.IMAGE_NAME }} --version
+
     - name: Get next version
       uses: reecetech/version-increment@2023.10.2
       id: version

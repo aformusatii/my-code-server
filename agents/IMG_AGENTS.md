@@ -27,6 +27,14 @@ checking whether a tool exists — the tools below are guaranteed present.**
 - Install project deps: `npm install`, `yarn`, or `pnpm install`.
 - Run code: `node script.js`.
 
+### AI coding CLIs
+- `codex`, `claude`, and `opencode` are installed in the image and on `PATH`.
+- Run `opencode` in a project directory; use `/connect` to configure DeepSeek
+  or another provider with your own API key.
+- Run as `abc` so settings persist under `/config`; update CLIs by rebuilding
+  the image. OpenCode global instructions and skills are seeded at startup
+  under `/config/.config/opencode`.
+
 ### ☕ Java
 - **OpenJDK 21 (full JDK)** — `javac` (compiler) and `java` (runtime).
 - `JAVA_HOME` is set. Build tools **Maven** (`mvn`) and **Gradle** (`gradle`) are installed.

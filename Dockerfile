@@ -1,7 +1,7 @@
 FROM lscr.io/linuxserver/code-server:latest
 
 # =============================================================================
-# SWISS-ARMY-KNIFE DEV IMAGE FOR AI AGENTS (Codex / Claude Code)
+# SWISS-ARMY-KNIFE DEV IMAGE FOR AI AGENTS (Codex / Claude Code / OpenCode)
 # Base: linuxserver/code-server (Ubuntu-based, runs as user "abc", PUID/PGID)
 # =============================================================================
 
@@ -82,6 +82,12 @@ ENV PATH="$JAVA_HOME/bin:$PATH"
 ARG CODEX_VERSION=latest
 RUN npm install -g --prefix /usr/local "@openai/codex@${CODEX_VERSION}" && \
     codex --version && \
+    npm cache clean --force
+
+# OpenCode's native CLI is installed through its official npm package.
+ARG OPENCODE_VERSION=latest
+RUN npm install -g --prefix /usr/local "@opencode/cli@${OPENCODE_VERSION}" && \
+    opencode --version && \
     npm cache clean --force
 
 # Claude's native apt package does not depend on the installed Node.js version.

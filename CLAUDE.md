@@ -12,8 +12,8 @@ for tools available inside the container.
 ## Key Files
 
 - `Dockerfile` - defines the custom image and installed toolchains.
-- `docker-compose.yaml` - runs the image, mounts persistent folders, and uses
-  host networking.
+- `docker-compose.yaml` - runs the image, mounts persistent folders, and publishes
+  port 8443 on the external `common-network` network.
 - `.env.example` - documents expected runtime environment variables.
 - `restart.sh` - convenience wrapper for `docker compose down` followed by
   `docker compose up -d --build`.
@@ -35,7 +35,7 @@ for tools available inside the container.
 | --- | --- |
 | Python | `python3`, `pip`, `venv`, and dev headers are installed. A virtual environment is created at `/config/.venv` during container startup, placed first on `PATH`, and owned by `abc`. |
 | Node.js | Node.js 24 LTS from NodeSource, plus global `yarn` and `pnpm` installed during the image build. |
-| AI coding CLIs | Codex (`codex`) installed globally through npm in `/usr/local`; Claude Code (`claude`) installed from Anthropic's signed stable apt repository. Both are installed outside `/config`. |
+| AI coding CLIs | Codex (`codex`) and OpenCode (`opencode`, package `@opencode/cli`) installed globally through npm in `/usr/local`; Claude Code (`claude`) installed from Anthropic's signed stable apt repository. All are installed outside `/config`. |
 | Java | OpenJDK 21 JDK, Maven, and Gradle. `JAVA_HOME` is set to `/usr/lib/jvm/java-21-openjdk-amd64`. |
 | C / C++ | `build-essential`, `gcc`, `g++`, `make`, `cmake`, and `gdb`. |
 | Utilities | `git`, `curl`, `wget`, `zip`, `unzip`, `ca-certificates`, `gnupg`, `software-properties-common`, and `pkg-config`. |
@@ -64,7 +64,7 @@ After changing the image, rebuild and verify:
 ```bash
 python --version && pip --version
 node --version && npm --version
-codex --version && claude --version
+codex --version && claude --version && opencode --version
 gh --version
 pandoc --version && weasyprint --version
 mvn -version

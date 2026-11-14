@@ -11,7 +11,7 @@ runtime bootstrapping.
 
 - Python in `/config/.venv`, first on `PATH`
 - Node.js 24 LTS with `npm`, `yarn`, and `pnpm`
-- Codex CLI (`codex`) and Claude Code CLI (`claude`)
+- Codex CLI (`codex`), Claude Code CLI (`claude`), and OpenCode (`opencode`)
 - GitHub CLI (`gh`), also used as git's credential helper for github.com
 - Document/PDF tools: `pandoc` and `weasyprint` (HTML/CSS to PDF)
 - OpenJDK 21 with Maven and Gradle
@@ -38,29 +38,30 @@ runtime bootstrapping.
 
 ## Run
 
-Create `.env` from `.env.example`, then start the container:
+Create `.env` from `.env.example` and ensure the external `common-network`
+Docker network exists, then pull and start the published image:
 
 ```bash
-docker compose up -d --build
+docker compose pull code-server
+docker compose up -d code-server
 ```
 
-Or rebuild and restart with:
+Compose uses the ECR image and publishes port 8443. It has no `build:` section;
+`docker compose up --build` does not build this Dockerfile.
 
-```bash
-./restart.sh
-```
-
-The compose file uses `network_mode: host`, so access depends on the
-code-server bind/port settings stored under `./config`.
+Pushes to `main` trigger `.github/workflows/build_and_push_image.yml`, which
+builds the image and publishes it to ECR. After that workflow succeeds, use
+the commands above to deploy the new image.
 
 ## AI coding CLIs
 
-Codex is installed globally through npm; Claude Code uses Anthropic's signed
-apt repository on the stable release channel. Both are installed in the image,
+Codex and OpenCode are installed globally through npm (`@openai/codex` and
+`@opencode/cli`); Claude Code uses Anthropic's signed apt repository on the
+stable release channel. All three are installed in the image,
 outside the `/config` mount, and are available on `PATH`.
 
-After rebuilding, run `codex` or `claude` from a project directory in the
-code-server terminal. From the Docker host, open a shell as the runtime user:
+After deploying the updated image, run `codex`, `claude`, or `opencode` from a
+project directory in the code-server terminal. From the Docker host, open a shell as the runtime user:
 
 ```bash
 docker compose exec --user abc code-server bash
@@ -74,15 +75,37 @@ these terminal commands does not switch the extensions to them. See the
 [Codex extension settings](https://developers.openai.com/codex/ide/settings/)
 and [Claude Code extension documentation](https://code.claude.com/docs/en/vs-code).
 
-To fetch newer CLI releases, rebuild without Docker's cached install layers:
+To fetch newer CLI releases, rebuild without Docker's cached install layers.
+For a local build using the same tag as Compose:
 
 ```bash
-docker compose build --no-cache code-server
-docker compose up -d code-server
+docker build --no-cache -t public.ecr.aws/f3w7h7x2/code-server:latest .
+docker compose up -d --pull never code-server
 ```
 
-For a specific Codex release, pass `--build-arg CODEX_VERSION=<version>` to the
-build command. Claude Code follows the apt repository's stable channel.
+To pin a release, pass `--build-arg CODEX_VERSION=<version>` or
+`--build-arg OPENCODE_VERSION=<version>` to `docker build`. Both default to
+`latest`; Claude Code follows the apt repository's stable channel.
+
+### OpenCode with DeepSeek
+
+1. Run `opencode` from your app's project directory in the code-server terminal.
+2. Enter `/connect`, select DeepSeek, and enter your DeepSeek API key.
+3. Select an available DeepSeek model and start your coding task.
+
+Credentials and settings stored under the runtime user's `/config` home persist
+across container recreation. Do not put API keys in the Dockerfile or commit
+them to the repository. Terminal use needs no extra service, port, or GPU.
+
+The startup hook seeds global instructions at
+`/config/.config/opencode/AGENTS.md` and bundled skills under
+`/config/.config/opencode/skills/`, owned by `abc`. Matching template files are
+overwritten at startup, while other user files are preserved. Project-specific
+`AGENTS.md` files provide additional guidance.
+
+See [OpenCode installation](https://opencode.ai/docs/),
+[global instructions](https://opencode.ai/docs/instructions/), and
+[DeepSeek integration](https://api-docs.deepseek.com/quick_start/agent_integrations/opencode/).
 
 ## GitHub CLI
 
@@ -119,7 +142,7 @@ gh auth status
 ```bash
 python --version && pip --version
 node --version && npm --version
-codex --version && claude --version
+codex --version && claude --version && opencode --version
 gh --version
 pandoc --version && weasyprint --version
 mvn -version
